@@ -13,7 +13,7 @@ const {
   pendingMessage
 } = require('./sendPrivateMessage');
 
-const token = process.env.TELEGRAM_BOT_TOKEN;
+const token = process.env.TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 
 const adminIds = process.env.ADMIN_IDS;
