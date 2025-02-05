@@ -125,7 +125,8 @@ bot.on('message', async (msg) => {
 
     case 'Программа Базового обучения':
       await bot.sendDocument(chatId, './documents/baseEducation/study_program.pdf')
-      await bot.sendMessage(chatId, returnHomeText)
+      await bot.sendMessage(chatId, ret)
+      break;
 
     case 'Начало рабочего дня':
       await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(startDayButtons));
@@ -133,15 +134,17 @@ bot.on('message', async (msg) => {
 
     case 'Начало рабочего дня (текст)':
       await bot.sendDocument(chatId, './documents/baseEducation/start_day.pdf')
-      await bot.sendMessage(chatId, returnHomeText)
+      await bot.sendMessage(chatId, returnBackText)
+      break;
 
     case 'Начало рабочего дня (видео)':
       await bot.sendMessage(chatId, linkToVideoText, {
         reply_markup: {
-          inline_keyboard: [{text: "Смотреть видео", url: 'https://drive.google.com/file/d/10hm8iQ8OyytR-phHhQmwh25Lr2BUtDpR/view?usp=drive_link'} ]
+          inline_keyboard: [[{text: "Смотреть видео", url: 'https://drive.google.com/file/d/10hm8iQ8OyytR-phHhQmwh25Lr2BUtDpR/view?usp=drive_link'}]],
         }
       })
       await bot.sendMessage(chatId, returnBackText)
+      break;
 
     default:
       await bot.sendMessage(chatId, defaultText);
