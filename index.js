@@ -5,6 +5,8 @@ const { startRegistration } = require('./registration');
 const { addButtons } = require('./utils');
 const homeButtons = require('./buttons/home');
 const rookiesButtons = require('./buttons/forRookies');
+const baseEducationButtons = require('./buttons/baseEducation/baseEducation');
+const startDayButtons = require('./buttons/baseEducation/startDay')
 const {
   startSendMessage,
   confirmSendMessage,
@@ -12,16 +14,23 @@ const {
   isAdmin,
   pendingMessage
 } = require('./sendMessage');
+const {
+  emptyMessage,
+  declineSendText,
+  returnHomeText,
+  chooseChapterText,
+  defaultText,
+  chooseChapterWithReturnText,
+  chooseChapterWithReturnAndBackText,
+  linkToVideoText,
+  returnBackText,
+ } = require('./constants')
 
 const token = process.env.TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 
 const adminIds = process.env.ADMIN_IDS;
 
-const declineSendText = 'Вы не можете делать рассылку в этом боте';
-const returnHomeText = 'Для возврата нажмите /home';
-const chooseChapterText = 'Выберите раздел:';
-const defaultText = 'Для возврата в начало нажмите /home\n\nЕсли у Вас возникли вопросы, ответы на которые Вы не нашли в этом боте, обратитесь в Отдел обучения и развития\n\nДля продолжения работы переключите клавиатуру на кнопки и выберите один из разделов ниже:'
 
 // Объект для отслеживания пользовательского ввода
 const userInputState = {};
@@ -95,14 +104,44 @@ bot.on('message', async (msg) => {
       await bot.sendMessage(chatId, chooseChapterText, addButtons(homeButtons));
       break;
 
+    // Для стажеров
     case 'Для стажеров':
       await bot.sendMessage(chatId, returnHomeText, addButtons(rookiesButtons));
+      break;
+
+    case 'Памятка стажера':
+      await bot.sendMessage(chatId, emptyMessage);
       break;
 
     case 'Контакты МСК':
       await bot.sendDocument(chatId, './documents/forRookies/contacts.pdf');
       await bot.sendMessage(chatId, returnHomeText);
       break;
+
+    // Базовое обучение
+    case 'Базовое обучение':
+      await bot.sendMessage(chatId, chooseChapterWithReturnText, addButtons(baseEducationButtons));
+      break;
+
+    case 'Программа Базового обучения':
+      await bot.sendDocument(chatId, './documents/baseEducation/study_program.pdf')
+      await bot.sendMessage(chatId, returnHomeText)
+
+    case 'Начало рабочего дня':
+      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(startDayButtons));
+      break;
+
+    case 'Начало рабочего дня (текст)':
+      await bot.sendDocument(chatId, './documents/baseEducation/start_day.pdf')
+      await bot.sendMessage(chatId, returnHomeText)
+
+    case 'Начало рабочего дня (видео)':
+      await bot.sendMessage(chatId, linkToVideoText, {
+        reply_markup: {
+          inline_keyboard: [{text: "Смотреть видео", url: 'https://drive.google.com/file/d/10hm8iQ8OyytR-phHhQmwh25Lr2BUtDpR/view?usp=drive_link'} ]
+        }
+      })
+      await bot.sendMessage(chatId, returnBackText)
 
     default:
       await bot.sendMessage(chatId, defaultText);
