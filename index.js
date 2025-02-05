@@ -11,7 +11,7 @@ const {
   cancelSendMessage,
   isAdmin,
   pendingMessage
-} = require('./sendPrivateMessage');
+} = require('./sendMessage');
 
 const token = process.env.TOKEN;
 const bot = new TelegramBot(token, { polling: true });
