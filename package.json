@@ -17,6 +17,8 @@
     "node-cron": "^3.0.3",
     "node-telegram-bot-api": "^0.66.0",
     "reminder": "file:",
-    "telegram": "^2.26.16"
+    "sqlite3": "^5.1.7",
+    "telegram": "^2.26.16",
+    "test": "file:"
   }
 }
