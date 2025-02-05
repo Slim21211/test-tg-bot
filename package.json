@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "send": "node sendMessage.js"
   },
   "author": "",
@@ -20,5 +20,8 @@
     "sqlite3": "^5.1.7",
     "telegram": "^2.26.16",
     "test": "file:"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }
