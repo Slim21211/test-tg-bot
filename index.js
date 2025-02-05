@@ -7,6 +7,6 @@ bot.on('text', (msg) => {
   if (msg.text === 'qqq') {
     bot.sendMessage(msg.chat.id, msg.text)
   } else {
-    bot.sendMessage(msg.chat.id, 'Я не знаю что ответить на это')
+    bot.sendMessage(msg.chat.id, 'Я пока не знаю что ответить на это')
   }
 })
