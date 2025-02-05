@@ -1,39 +1,59 @@
-require('dotenv').config();
-const { TelegramClient } = require("telegram");
-const { StringSession } = require("telegram/sessions");
-const input = require("input");
+const { db } = require('./db');
 
-const apiId = process.env.API_ID;
-const apiHash = process.env.API_HASH;
-const session = process.env.STRING_SESSION;
-const stringSession = new StringSession(session);
-const users = ["@Elizaveta_Shishkina", "@Dushnila_007"];
+const pendingMessage = {};
 
-(async () => {
-  const client = new TelegramClient(stringSession, apiId, apiHash, {
-    connectionRetries: 5,
-  });
+async function startSendMessage(bot, chatId, userInputState) {
+  await bot.sendMessage(chatId, 'Введите текст сообщения для рассылки:');
+  userInputState[chatId] = 'awaiting_message';
+}
 
-  await client.start({
-    phoneNumber: async () => await input.text("Введите номер телефона: "),
-    password: async () => await input.text("Введите пароль (если есть): "),
-    phoneCode: async () => await input.text("Введите код из Telegram: "),
-    onError: (err) => console.log(err),
-  });
-
-  console.log("Клиент подключен!");
-
-  // Сохранение сессии (чтобы не вводить код при каждом запуске)
-  console.log("Сохраненная сессия:", client.session.save());
-
-  for (const user of users) {
-    try {
-      await client.sendMessage(user, { message: "Привет! Подтверждааай!." });
-      console.log(`Сообщение отправлено ${user}`);
-    } catch (error) {
-      console.log(`Ошибка при отправке сообщения ${user}:`, error);
-    }
+async function confirmSendMessage(bot, chatId) {
+  const textToSend = pendingMessage[chatId];
+  if (!textToSend) {
+    await bot.sendMessage(chatId, 'Не введен текст для рассылки.\nДля начала рассылки нажми: /send.');
+    return;
   }
 
-  console.log("Все сообщения отправлены!");
-})();
+  await bot.sendMessage(chatId, 'Рассылка начата. Это может занять некоторое время.');
+
+  await db.all('SELECT user_id FROM users_info', [], (err, rows) => {
+    if (err) {
+      bot.sendMessage(chatId, 'Произошла ошибка. Попробуйте позже.');
+      return;
+    }
+
+    const userIdsToSend = rows.map((row) => row.user_id);
+    userIdsToSend.forEach((userId) => {
+      try {
+        bot.sendMessage(userId, textToSend);
+      } catch (e) {
+        console.error(`Ошибка при отправке сообщения пользователю ${userId}: ${e.message}`);
+      }
+    });
+
+    bot.sendMessage(chatId, 'Рассылка завершена.');
+    delete pendingMessage[chatId];
+  });
+}
+
+async function cancelSendMessage(bot, chatId) {
+  if (!pendingMessage[chatId]) {
+    await bot.sendMessage(chatId, 'Не введен текст для рассылки.\nДля начала рассылки нажми: /send.');
+    return;
+  }
+
+  await delete pendingMessage[chatId];
+  await bot.sendMessage(chatId, 'Рассылка отменена.');
+}
+
+function isAdmin(chatId, adminIds) {
+  return adminIds.includes(chatId.toString());
+}
+
+module.exports = {
+  startSendMessage,
+  confirmSendMessage,
+  cancelSendMessage,
+  isAdmin,
+  pendingMessage,
+};
