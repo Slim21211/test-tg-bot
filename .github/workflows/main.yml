@@ -21,4 +21,4 @@ jobs:
           git pull origin main
           git status
           npm install --only=prod
-          pm2 start tg-bot
+          pm2 restart tg-bot

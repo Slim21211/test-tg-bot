@@ -9,5 +9,4 @@ bot.on('text', (msg) => {
   } else {
     bot.sendMessage(msg.chat.id, 'Я не знаю что ответить на это')
   }
-  
 })
