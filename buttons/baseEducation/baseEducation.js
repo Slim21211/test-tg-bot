@@ -1,4 +1,4 @@
-const {getButtons} = require('../../utils')
+const { getButtons } = require('../../utils')
 
 const baseEducationButtons = [
   'Программа Базового обучения',

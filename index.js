@@ -3,11 +3,14 @@ const TelegramBot = require('node-telegram-bot-api');
 const { db } = require('./db');
 const { startRegistration } = require('./registration');
 const { addButtons } = require('./utils');
-const homeButtons = require('./buttons/home');
-const rookiesButtons = require('./buttons/forRookies');
-const baseEducationButtons = require('./buttons/baseEducation/baseEducation');
-const startDayButtons = require('./buttons/baseEducation/startDay')
-const expendMaterialsButtons = require('./buttons/baseEducation/expendMaterials')
+const {
+  homeButtons,
+  rookiesButtons,
+  baseEducationButtons,
+  startDayButtons,
+  expendMaterialsButtons,
+  invoiceButtons
+} = require('./buttons')
 const {
   startSendMessage,
   confirmSendMessage,
@@ -160,6 +163,24 @@ bot.on('message', async (msg) => {
       await bot.sendMessage(chatId, linkToVideoText, {
         reply_markup: {
           inline_keyboard: [[{text: "Смотреть видео", url: 'https://drive.google.com/file/d/1c55YdtzeFyOfyQIQRVcqdFOTZYgnh7c6/view?usp=drive_link'}]],
+        }
+      })
+      await bot.sendMessage(chatId, returnBackText)
+      break;
+
+    case 'Накладная':
+      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(invoiceButtons));
+      break;
+
+    case 'Накладная (текст)':
+      await bot.sendDocument(chatId, './documents/baseEducation/invoice.pdf')
+      await bot.sendMessage(chatId, returnBackText)
+      break;
+
+    case 'Накладная (видео)':
+      await bot.sendMessage(chatId, linkToVideoText, {
+        reply_markup: {
+          inline_keyboard: [[{text: "Смотреть видео", url: 'https://drive.google.com/file/d/1ddLAjq9t8mki7M-Dr33pv_Z4SkJ1H_Cq/view?usp=drive_link'}]],
         }
       })
       await bot.sendMessage(chatId, returnBackText)
