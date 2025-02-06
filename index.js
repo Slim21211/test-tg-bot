@@ -30,6 +30,7 @@ const {
   linkToVideoText,
   returnBackText,
   startDayVideoLink,
+  expendMaterialsVideoLink,
  } = require('./constants')
 
 const token = process.env.TOKEN;
@@ -158,11 +159,7 @@ bot.on('message', async (msg) => {
       break;
 
     case 'Расходные материалы (видео)':
-      await bot.sendMessage(chatId, linkToVideoText, {
-        reply_markup: {
-          inline_keyboard: [[{text: "Смотреть видео", url: 'https://drive.google.com/file/d/1c55YdtzeFyOfyQIQRVcqdFOTZYgnh7c6/view?usp=drive_link'}]],
-        }
-      })
+      await bot.sendMessage(chatId, linkToVideoText, addInlineLink(expendMaterialsVideoLink))
       await bot.sendMessage(chatId, returnBackText)
       break;
 
