@@ -1,8 +1,8 @@
 const { getButtons } = require('../../utils')
 
 const invoiceButtons = [
-  'Расходные материалы (текст)',
-  'Расходные материалы (видео)',
+  'Накладная (текст)',
+  'Накладная (видео)',
 ]
 
 module.exports = getButtons(invoiceButtons);
