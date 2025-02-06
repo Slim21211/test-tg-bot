@@ -144,7 +144,7 @@ bot.on('message', async (msg) => {
       break;
 
     case 'Начало рабочего дня (видео)':
-      await bot.sendMessage(chatId, linkToVideoText, addInlineLink(startDayVideoLink))
+      await bot.sendMessage(chatId, addInlineLink(startDayVideoLink))
       await bot.sendMessage(chatId, returnBackText)
       break;
 
