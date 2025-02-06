@@ -9,7 +9,8 @@ const {
   baseEducationButtons,
   startDayButtons,
   expendMaterialsButtons,
-  invoiceButtons
+  invoiceButtons,
+  personalDeliveryButtons,
 } = require('./buttons')
 const {
   startSendMessage,
@@ -181,6 +182,24 @@ bot.on('message', async (msg) => {
       await bot.sendMessage(chatId, linkToVideoText, {
         reply_markup: {
           inline_keyboard: [[{text: "Смотреть видео", url: 'https://drive.google.com/file/d/1ddLAjq9t8mki7M-Dr33pv_Z4SkJ1H_Cq/view?usp=drive_link'}]],
+        }
+      })
+      await bot.sendMessage(chatId, returnBackText)
+      break;
+
+    case 'Доставка лично в руки':
+      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(personalDeliveryButtons));
+      break;
+
+    case 'Доставка лично в руки (текст)':
+      await bot.sendDocument(chatId, './documents/baseEducation/deliv_person.pdf')
+      await bot.sendMessage(chatId, returnBackText)
+      break;
+
+    case 'Доставка лично в руки (видео)':
+      await bot.sendMessage(chatId, linkToVideoText, {
+        reply_markup: {
+          inline_keyboard: [[{text: "Смотреть видео", url: 'https://drive.google.com/file/d/1dT0o7FTahiWOPKY3UmyBmHy4g-5xS7cE/view?usp=drive_link'}]],
         }
       })
       await bot.sendMessage(chatId, returnBackText)

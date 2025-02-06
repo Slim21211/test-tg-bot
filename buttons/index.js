@@ -4,6 +4,7 @@ const baseEducationButtons = require('./baseEducation/baseEducation')
 const startDayButtons = require('./baseEducation/startDay')
 const expendMaterialsButtons = require('./baseEducation/expendMaterials')
 const invoiceButtons = require('./baseEducation/invoice')
+const personalDeliveryButtons = require('./baseEducation/personalDelivery')
 
 module.exports = {
   homeButtons,
@@ -11,5 +12,6 @@ module.exports = {
   baseEducationButtons,
   startDayButtons,
   expendMaterialsButtons,
-  invoiceButtons
+  invoiceButtons,
+  personalDeliveryButtons,
 }
