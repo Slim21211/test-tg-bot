@@ -7,6 +7,7 @@ const homeButtons = require('./buttons/home');
 const rookiesButtons = require('./buttons/forRookies');
 const baseEducationButtons = require('./buttons/baseEducation/baseEducation');
 const startDayButtons = require('./buttons/baseEducation/startDay')
+const expendMaterialsButtons = require('./buttons/baseEducation/expendMaterials')
 const {
   startSendMessage,
   confirmSendMessage,
@@ -141,6 +142,24 @@ bot.on('message', async (msg) => {
       await bot.sendMessage(chatId, linkToVideoText, {
         reply_markup: {
           inline_keyboard: [[{text: "Смотреть видео", url: 'https://drive.google.com/file/d/10hm8iQ8OyytR-phHhQmwh25Lr2BUtDpR/view?usp=drive_link'}]],
+        }
+      })
+      await bot.sendMessage(chatId, returnBackText)
+      break;
+
+    case 'Расходные материалы':
+      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(expendMaterialsButtons));
+      break;
+
+    case 'Расходные материалы (текст)':
+      await bot.sendDocument(chatId, './documents/baseEducation/expend_materials.pdf')
+      await bot.sendMessage(chatId, returnBackText)
+      break;
+
+    case 'Расходные материалы (видео)':
+      await bot.sendMessage(chatId, linkToVideoText, {
+        reply_markup: {
+          inline_keyboard: [[{text: "Смотреть видео", url: 'https://drive.google.com/file/d/1c55YdtzeFyOfyQIQRVcqdFOTZYgnh7c6/view?usp=drive_link'}]],
         }
       })
       await bot.sendMessage(chatId, returnBackText)
