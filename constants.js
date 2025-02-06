@@ -11,7 +11,7 @@ const returnBackText = 'Для возврата нажмите /back'
 
 // Ссылки на видео
 const startDayVideoLink = 'https://drive.google.com/file/d/10hm8iQ8OyytR-phHhQmwh25Lr2BUtDpR/view?usp=drive_link'
-
+const expendMaterialsVideoLink = 'https://drive.google.com/file/d/1c55YdtzeFyOfyQIQRVcqdFOTZYgnh7c6/view?usp=drive_link'
 
 module.exports = {
   emptyMessage,
@@ -24,4 +24,5 @@ module.exports = {
   linkToVideoText,
   returnBackText,
   startDayVideoLink,
+  expendMaterialsVideoLink,
 };
