@@ -11,12 +11,20 @@ function addButtons(array) {
     "reply_markup": {
       "keyboard": array,
       resize_keyboard: true,
-      
       }
+  }
+}
+
+function addInlineLink(link) {
+  return {
+    'reply_markup': {
+      'inline_keyboard': [[{text: 'Смотреть видео', url: link}]],
+    },
   }
 }
 
 module.exports = {
   getButtons,
   addButtons,
+  addInlineLink
 }

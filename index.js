@@ -2,7 +2,7 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const { db } = require('./db');
 const { startRegistration } = require('./registration');
-const { addButtons } = require('./utils');
+const { addButtons, addInlineLink } = require('./utils');
 const {
   homeButtons,
   rookiesButtons,
@@ -29,6 +29,7 @@ const {
   chooseChapterWithReturnAndBackText,
   linkToVideoText,
   returnBackText,
+  startDayVideoLink,
  } = require('./constants')
 
 const token = process.env.TOKEN;
@@ -99,7 +100,7 @@ bot.on('message', async (msg) => {
       if (!isAdmin(chatId, adminIds)) {
         await bot.sendMessage(chatId, declineSendText);
         
-        return;        
+        return;
       }
       
       await cancelSendMessage(bot, chatId);
@@ -130,7 +131,7 @@ bot.on('message', async (msg) => {
 
     case 'Программа Базового обучения':
       await bot.sendDocument(chatId, './documents/baseEducation/study_program.pdf')
-      await bot.sendMessage(chatId, ret)
+      await bot.sendMessage(chatId, returnHomeText)
       break;
 
     case 'Начало рабочего дня':
@@ -143,11 +144,7 @@ bot.on('message', async (msg) => {
       break;
 
     case 'Начало рабочего дня (видео)':
-      await bot.sendMessage(chatId, linkToVideoText, {
-        reply_markup: {
-          inline_keyboard: [[{text: "Смотреть видео", url: 'https://drive.google.com/file/d/10hm8iQ8OyytR-phHhQmwh25Lr2BUtDpR/view?usp=drive_link'}]],
-        }
-      })
+      await bot.sendMessage(chatId, linkToVideoText, addInlineLink(startDayVideoLink))
       await bot.sendMessage(chatId, returnBackText)
       break;
 

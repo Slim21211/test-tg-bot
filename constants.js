@@ -1,4 +1,5 @@
-const emptyMessage = 'Материал на доработке\n\nДля возврата в начало нажмите /home'
+// Тексты сообщений
+const emptyMessage = 'Материал на доработке...\n\nДля возврата в начало нажмите /home'
 const declineSendText = 'Вы не можете делать рассылку в этом боте';
 const returnHomeText = 'Для возврата нажмите /home';
 const chooseChapterText = 'Выберите раздел:';
@@ -7,6 +8,10 @@ const chooseChapterWithReturnText = 'Выберите интересующий �
 const chooseChapterWithReturnAndBackText = 'Выберите формат обучающего материала:\n\nДля возврата в начало нажмите /home\n\nДля возврата к списку разделов нажмите /back'
 const linkToVideoText = 'Для просмотра видео перейдите по ссылке:'
 const returnBackText = 'Для возврата нажмите /back'
+
+// Ссылки на видео
+const startDayVideoLink = 'https://drive.google.com/file/d/10hm8iQ8OyytR-phHhQmwh25Lr2BUtDpR/view?usp=drive_link'
+
 
 module.exports = {
   emptyMessage,
@@ -17,5 +22,6 @@ module.exports = {
   chooseChapterWithReturnText,
   chooseChapterWithReturnAndBackText,
   linkToVideoText,
-  returnBackText
+  returnBackText,
+  startDayVideoLink,
 };
