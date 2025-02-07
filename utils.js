@@ -1,3 +1,5 @@
+const { linkToVideoText } = require('./constants');
+
 function getButtons(array) {
   const result = [];
   for (let i = 0; i < array.length; i += 2) {
@@ -16,11 +18,11 @@ function addButtons(array) {
 }
 
 function addInlineLink(link) {
-  return {
+  return (linkToVideoText, {
     'reply_markup': {
       'inline_keyboard': [[{text: 'Смотреть видео', url: link}]],
     },
-  }
+  })
 }
 
 module.exports = {
