@@ -8,11 +8,12 @@ const chooseChapterWithReturnText = 'Выберите интересующий �
 const chooseChapterWithReturnAndBackText = 'Выберите формат обучающего материала:\n\nДля возврата в начало нажмите /home\n\nДля возврата к списку разделов нажмите /back'
 const linkToVideoText = 'Для просмотра видео перейдите по ссылке:'
 const returnBackText = 'Для возврата нажмите /back'
-const test = 'test'
 
 // Ссылки на видео
 const startDayVideoLink = 'https://drive.google.com/file/d/10hm8iQ8OyytR-phHhQmwh25Lr2BUtDpR/view?usp=drive_link'
 const expendMaterialsVideoLink = 'https://drive.google.com/file/d/1c55YdtzeFyOfyQIQRVcqdFOTZYgnh7c6/view?usp=drive_link'
+const invoiceVideoLink = 'https://drive.google.com/file/d/1ddLAjq9t8mki7M-Dr33pv_Z4SkJ1H_Cq/view?usp=drive_link'
+const personalDeliveryVideoLink = 'https://drive.google.com/file/d/1dT0o7FTahiWOPKY3UmyBmHy4g-5xS7cE/view?usp=drive_link'
 
 module.exports = {
   emptyMessage,
@@ -26,5 +27,6 @@ module.exports = {
   returnBackText,
   startDayVideoLink,
   expendMaterialsVideoLink,
-  test,
+  invoiceVideoLink,
+  personalDeliveryVideoLink,
 };
