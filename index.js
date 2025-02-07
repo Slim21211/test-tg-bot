@@ -120,7 +120,7 @@ bot.on('message', async (msg) => {
       await bot.sendMessage(chatId, emptyMessage);
       break;
 
-    case 'Контакты МСК и МО и все':
+    case 'Контакты МСК и МО':
       await bot.sendDocument(chatId, './documents/forRookies/contacts.pdf');
       await bot.sendMessage(chatId, returnHomeText);
       break;
