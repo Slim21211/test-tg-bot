@@ -120,7 +120,7 @@ bot.on('message', async (msg) => {
       await bot.sendMessage(chatId, emptyMessage);
       break;
 
-    case 'Контакты МСК и МО':
+    case 'Контакты МСК':
       await bot.sendDocument(chatId, './documents/forRookies/contacts.pdf');
       await bot.sendMessage(chatId, returnHomeText);
       break;
@@ -145,7 +145,7 @@ bot.on('message', async (msg) => {
       break;
 
     case 'Начало рабочего дня (видео)':
-      await bot.sendMessage(chatId, addInlineLink(startDayVideoLink))
+      await bot.sendMessage(chatId, linkToVideoText, addInlineLink(startDayVideoLink))
       await bot.sendMessage(chatId, returnBackText)
       break;
 

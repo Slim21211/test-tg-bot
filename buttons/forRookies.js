@@ -2,7 +2,7 @@ const { getButtons } = require("../utils")
 
 const rookiesButtons = [
   'Памятка стажера',
-  'Контакты МСК'
+  'Контакты МСК TTTT'
 ]
 
 module.exports = getButtons(rookiesButtons);
