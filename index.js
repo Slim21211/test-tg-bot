@@ -113,6 +113,10 @@ bot.on('message', async (msg) => {
       await bot.sendMessage(chatId, chooseChapterText, addButtons(homeButtons));
       break;
 
+    case '/back':
+      await bot.sendMessage(chatId, chooseChapterWithReturnText, addButtons(baseEducationButtons));
+      break;
+
     // Для стажеров
     case 'Для стажеров':
       await bot.sendMessage(chatId, returnHomeText, addButtons(rookiesButtons));
