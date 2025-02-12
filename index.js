@@ -11,6 +11,7 @@ const {
   expendMaterialsButtons,
   invoiceButtons,
   personalDeliveryButtons,
+  deliveryWithReturnButtons,
 } = require('./buttons')
 const {
   startSendMessage,
@@ -33,6 +34,7 @@ const {
   expendMaterialsVideoLink,
   invoiceVideoLink,
   personalDeliveryVideoLink,
+  deliveryWithReturnVideoLink,
  } = require('./constants')
 
 const token = process.env.TOKEN;
@@ -194,6 +196,20 @@ bot.on('message', async (msg) => {
 
     case 'Доставка лично в руки (видео)':
       await bot.sendMessage(chatId, linkToVideoText, addInlineLink(personalDeliveryVideoLink))
+      await bot.sendMessage(chatId, returnBackText)
+      break;
+
+    case 'Доставка с возвратом':
+      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(deliveryWithReturnButtons));
+      break;
+
+    case 'Доставка с возвратом (текст)':
+      await bot.sendDocument(chatId, './documents/baseEducation/return_shipping.pdf')
+      await bot.sendMessage(chatId, returnBackText)
+      break;
+
+    case 'Доставка с возвратом (видео)':
+      await bot.sendMessage(chatId, linkToVideoText, addInlineLink(deliveryWithReturnVideoLink))
       await bot.sendMessage(chatId, returnBackText)
       break;
 
