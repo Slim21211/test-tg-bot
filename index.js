@@ -12,6 +12,7 @@ const {
   invoiceButtons,
   personalDeliveryButtons,
   deliveryWithReturnButtons,
+  receptionByCashButtons,
 } = require('./buttons')
 const {
   startSendMessage,
@@ -210,6 +211,20 @@ bot.on('message', async (msg) => {
 
     case 'Доставка с возвратом (видео)':
       await bot.sendMessage(chatId, linkToVideoText, addInlineLink(deliveryWithReturnVideoLink))
+      await bot.sendMessage(chatId, returnBackText)
+      break;
+
+    case 'Забор за наличные деньги':
+      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(receptionByCashButtons));
+      break;
+
+    case 'Забор за наличные деньги (текст)':
+      await bot.sendDocument(chatId, './documents/baseEducation/reception_cash.pdf')
+      await bot.sendMessage(chatId, returnBackText)
+      break;
+
+    case 'Доставка с возвратом (видео)':
+      await bot.sendMessage(chatId, emptyMessage)
       await bot.sendMessage(chatId, returnBackText)
       break;
 
