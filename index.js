@@ -223,7 +223,7 @@ bot.on('message', async (msg) => {
       await bot.sendMessage(chatId, returnBackText)
       break;
 
-    case 'Доставка с возвратом (видео)':
+    case 'Забор за наличные деньги (видео)':
       await bot.sendMessage(chatId, emptyMessage)
       await bot.sendMessage(chatId, returnBackText)
       break;
