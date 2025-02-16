@@ -138,7 +138,7 @@ bot.on('message', async (msg) => {
       await bot.sendMessage(chatId, messages.chooseChapterWithReturnText, addButtons(baseEducationButtons));
       break;
 
-    case '/search':
+    case '🔍 Поиск':
       userInputState[chatId] = 'awaiting_search_query';
       bot.sendMessage(chatId, 'Введите текст для поиска в документах:');
       break;
