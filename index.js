@@ -1,8 +1,9 @@
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const { db } = require('./db');
+const path = require('path');
 const { startRegistration } = require('./registration');
-const { addButtons, addInlineLink } = require('./utils');
+const { addButtons, addInlineLink, searchInPDFs } = require('./utils');
 const {
   homeButtons,
   rookiesButtons,
@@ -22,15 +23,7 @@ const {
   pendingMessage
 } = require('./sendMessage');
 const {
-  emptyMessage,
-  declineSendText,
-  returnHomeText,
-  chooseChapterText,
-  defaultText,
-  chooseChapterWithReturnText,
-  chooseChapterWithReturnAndBackText,
-  linkToVideoText,
-  returnBackText,
+  messages,
   startDayVideoLink,
   expendMaterialsVideoLink,
   invoiceVideoLink,
@@ -42,6 +35,7 @@ const token = process.env.TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 
 const adminIds = process.env.ADMIN_IDS;
+const pdfFolderPath = path.join(__dirname, 'documents');
 
 
 // Объект для отслеживания пользовательского ввода
@@ -65,6 +59,30 @@ bot.on('message', async (msg) => {
     return;
   }
 
+  if (currentState === 'awaiting_search_query') {
+    delete userInputState[chatId];
+  
+    const searchResults = await searchInPDFs(pdfFolderPath, messageText);
+  
+    if (searchResults.length > 0) {
+      for (const result of searchResults) {
+        const { filePath, sentences } = result;
+  
+        await bot.sendDocument(chatId, filePath);
+  
+        if (sentences.length > 0) {
+          await bot.sendMessage(chatId, `Найденные совпадения в ${path.basename(filePath)}:\n\n${sentences.join('\n')}`);
+        }
+      }
+      await bot.sendMessage(chatId, messages.returnHomeText)
+    } else {
+      await bot.sendMessage(chatId, 'Совпадений не найдено. Для другого запроса нажмите /search');
+    }
+  
+    return;
+  }
+  
+
   // Основной обработчик сообщений пользователя
   switch (messageText) {
     case '/start':
@@ -84,7 +102,7 @@ bot.on('message', async (msg) => {
 
     case '/send':
       if (!isAdmin(chatId, adminIds)) {
-        await bot.sendMessage(chatId, declineSendText);
+        await bot.sendMessage(chatId, messages.declineSendText);
 
         return;
       }
@@ -94,7 +112,7 @@ bot.on('message', async (msg) => {
 
     case '/confirm_send':
       if (!isAdmin(chatId, adminIds)) {
-        await bot.sendMessage(chatId, declineSendText);
+        await bot.sendMessage(chatId, messages.declineSendText);
 
         return;
       }
@@ -104,7 +122,7 @@ bot.on('message', async (msg) => {
 
     case '/cancel_send':
       if (!isAdmin(chatId, adminIds)) {
-        await bot.sendMessage(chatId, declineSendText);
+        await bot.sendMessage(chatId, messages.declineSendText);
         
         return;
       }
@@ -113,123 +131,128 @@ bot.on('message', async (msg) => {
       break;
 
     case '/home':
-      await bot.sendMessage(chatId, chooseChapterText, addButtons(homeButtons));
+      await bot.sendMessage(chatId, messages.chooseChapterText, addButtons(homeButtons));
       break;
 
     case '/back':
-      await bot.sendMessage(chatId, chooseChapterWithReturnText, addButtons(baseEducationButtons));
+      await bot.sendMessage(chatId, messages.chooseChapterWithReturnText, addButtons(baseEducationButtons));
+      break;
+
+    case '/search':
+      userInputState[chatId] = 'awaiting_search_query';
+      bot.sendMessage(chatId, 'Введите текст для поиска в документах:');
       break;
 
     // Для стажеров
     case 'Для стажеров':
-      await bot.sendMessage(chatId, returnHomeText, addButtons(rookiesButtons));
+      await bot.sendMessage(chatId, messages.returnHomeText, addButtons(rookiesButtons));
       break;
 
     case 'Памятка стажера':
-      await bot.sendMessage(chatId, emptyMessage);
+      await bot.sendMessage(chatId, messages.emptyMessage);
       break;
 
     case 'Контакты МСК':
-      await bot.sendDocument(chatId, './documents/forRookies/contacts.pdf');
-      await bot.sendMessage(chatId, returnHomeText);
+      await bot.sendDocument(chatId, './documents/forRookies/Контакты.pdf');
+      await bot.sendMessage(chatId, messages.returnHomeText);
       break;
 
     // Базовое обучение
     case 'Базовое обучение':
-      await bot.sendMessage(chatId, chooseChapterWithReturnText, addButtons(baseEducationButtons));
+      await bot.sendMessage(chatId, messages.chooseChapterWithReturnText, addButtons(baseEducationButtons));
       break;
 
     case 'Программа Базового обучения':
-      await bot.sendDocument(chatId, './documents/baseEducation/study_program.pdf')
-      await bot.sendMessage(chatId, returnHomeText)
+      await bot.sendDocument(chatId, './documents/baseEducation/Программа обучения.pdf')
+      await bot.sendMessage(chatId, messages.returnHomeText)
       break;
 
     case 'Начало рабочего дня':
-      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(startDayButtons));
+      await bot.sendMessage(chatId, messages.chooseChapterWithReturnAndBackText, addButtons(startDayButtons));
       break;
 
     case 'Начало рабочего дня (текст)':
-      await bot.sendDocument(chatId, './documents/baseEducation/start_day.pdf')
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendDocument(chatId, './documents/baseEducation/Начало рабочего дня.pdf')
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     case 'Начало рабочего дня (видео)':
-      await bot.sendMessage(chatId, linkToVideoText, addInlineLink(startDayVideoLink))
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendMessage(chatId, messages.linkToVideoText, addInlineLink(startDayVideoLink))
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     case 'Расходные материалы':
-      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(expendMaterialsButtons));
+      await bot.sendMessage(chatId, messages.chooseChapterWithReturnAndBackText, addButtons(expendMaterialsButtons));
       break;
 
     case 'Расходные материалы (текст)':
-      await bot.sendDocument(chatId, './documents/baseEducation/expend_materials.pdf')
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendDocument(chatId, './documents/baseEducation/Расходные материалы.pdf')
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     case 'Расходные материалы (видео)':
-      await bot.sendMessage(chatId, linkToVideoText, addInlineLink(expendMaterialsVideoLink))
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendMessage(chatId, messages.linkToVideoText, addInlineLink(expendMaterialsVideoLink))
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     case 'Накладная':
-      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(invoiceButtons));
+      await bot.sendMessage(chatId, messages.chooseChapterWithReturnAndBackText, addButtons(invoiceButtons));
       break;
 
     case 'Накладная (текст)':
-      await bot.sendDocument(chatId, './documents/baseEducation/invoice.pdf')
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendDocument(chatId, './documents/baseEducation/Накладная.pdf')
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     case 'Накладная (видео)':
-      await bot.sendMessage(chatId, linkToVideoText,addInlineLink(invoiceVideoLink))
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendMessage(chatId, messages.linkToVideoText,addInlineLink(invoiceVideoLink))
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     case 'Доставка лично в руки':
-      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(personalDeliveryButtons));
+      await bot.sendMessage(chatId, messages.chooseChapterWithReturnAndBackText, addButtons(personalDeliveryButtons));
       break;
 
     case 'Доставка лично в руки (текст)':
-      await bot.sendDocument(chatId, './documents/baseEducation/deliv_person.pdf')
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendDocument(chatId, './documents/baseEducation/Доставка лично в руки.pdf')
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     case 'Доставка лично в руки (видео)':
-      await bot.sendMessage(chatId, linkToVideoText, addInlineLink(personalDeliveryVideoLink))
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendMessage(chatId, messages.linkToVideoText, addInlineLink(personalDeliveryVideoLink))
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     case 'Доставка с возвратом':
-      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(deliveryWithReturnButtons));
+      await bot.sendMessage(chatId, messages.chooseChapterWithReturnAndBackText, addButtons(deliveryWithReturnButtons));
       break;
 
     case 'Доставка с возвратом (текст)':
-      await bot.sendDocument(chatId, './documents/baseEducation/return_shipping.pdf')
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendDocument(chatId, './documents/baseEducation/Доставка с возвратом.pdf')
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     case 'Доставка с возвратом (видео)':
-      await bot.sendMessage(chatId, linkToVideoText, addInlineLink(deliveryWithReturnVideoLink))
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendMessage(chatId, messages.linkToVideoText, addInlineLink(deliveryWithReturnVideoLink))
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     case 'Забор за наличные деньги':
-      await bot.sendMessage(chatId, chooseChapterWithReturnAndBackText, addButtons(receptionByCashButtons));
+      await bot.sendMessage(chatId, messages.chooseChapterWithReturnAndBackText, addButtons(receptionByCashButtons));
       break;
 
     case 'Забор за наличные деньги (текст)':
-      await bot.sendDocument(chatId, './documents/baseEducation/reception_cash.pdf')
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendDocument(chatId, './documents/baseEducation/Забор за наличные деньги.pdf')
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     case 'Забор за наличные деньги (видео)':
-      await bot.sendMessage(chatId, emptyMessage)
-      await bot.sendMessage(chatId, returnBackText)
+      await bot.sendMessage(chatId, messages.emptyMessage)
+      await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
     default:
-      await bot.sendMessage(chatId, defaultText);
+      await bot.sendMessage(chatId, messages.defaultText);
       break;
   }
 });
