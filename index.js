@@ -251,6 +251,22 @@ bot.on('message', async (msg) => {
       await bot.sendMessage(chatId, messages.returnBackText)
       break;
 
+    case 'Приложение':
+      await bot.sendMessage(chatId, "Go to mini-app", {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: 'Open App',
+                web_app: {url: 'https://mini-app-mauve.vercel.app/'}
+              }
+            ]
+          ]
+        }
+      })
+      await bot.sendMessage(chatId, messages.returnBackText)
+      break;
+
     default:
       await bot.sendMessage(chatId, messages.defaultText);
       break;
